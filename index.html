@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>fNX Host · Next Gen GitHub Live Hosting OS</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at 20% 30%, #0a0a1a, #020408);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #eef5ff;
+        }
+
+        /* fNX OS Desktop */
+        .fnx-desktop {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb1 { width: 400px; height: 400px; background: #0066ff; top: -100px; left: -100px; animation-delay: 0s; }
+        .orb2 { width: 500px; height: 500px; background: #00d4ff; bottom: -150px; right: -100px; animation-delay: 5s; }
+        .orb3 { width: 300px; height: 300px; background: #8b00ff; top: 50%; left: 50%; animation-delay: 10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Taskbar */
+        .fnx-taskbar {
+            background: rgba(10, 20, 35, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-100%); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #00d4ff, #0066ff, #8b00ff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0,212,255,0.5); }
+            50% { box-shadow: 0 0 20px rgba(0,212,255,0.8); }
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #8b00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .taskbar-time {
+            background: rgba(0,0,0,0.5);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Dashboard Grid - staggered animation */
+        .fnx-dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 28px;
+        }
+
+        /* Windows with staggered fade-in */
+        .fnx-window {
+            background: rgba(12, 22, 40, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: windowPop 0.5s forwards;
+        }
+
+        .fnx-window:nth-child(1) { animation-delay: 0.1s; }
+        .fnx-window:nth-child(2) { animation-delay: 0.3s; }
+        .fnx-window:nth-child(3) { animation-delay: 0.5s; }
+
+        @keyframes windowPop {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fnx-window:hover {
+            transform: translateY(-5px) scale(1.01);
+            border-color: rgba(0, 212, 255, 0.6);
+            box-shadow: 0 20px 40px rgba(0,212,255,0.2);
+        }
+
+        .window-header {
+            background: rgba(0, 20, 40, 0.7);
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .window-content {
+            padding: 24px;
+        }
+
+        /* Glass inputs */
+        .glass-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #2c405e;
+            border-radius: 18px;
+            color: #fff;
+            font-size: 0.9rem;
+            margin-bottom: 14px;
+            transition: all 0.3s;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 12px rgba(0,212,255,0.3);
+            transform: scale(1.01);
+        }
+
+        .btn-fnx {
+            background: linear-gradient(95deg, #0f2b3b, #001a2f);
+            border: 1px solid #2b9eff;
+            border-radius: 18px;
+            padding: 12px 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .btn-fnx:hover:not(:disabled) {
+            background: #1a4a6e;
+            border-color: #6ad4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,160,255,0.4);
+        }
+
+        .upload-zone-fnx {
+            border: 2px dashed rgba(0, 212, 255, 0.5);
+            background: rgba(0, 20, 40, 0.4);
+            border-radius: 24px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone-fnx:hover {
+            border-color: #00d4ff;
+            background: rgba(0,212,255,0.08);
+            transform: scale(1.02);
+        }
+
+        .status-card {
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-top: 14px;
+            font-size: 0.85rem;
+            animation: fadeSlide 0.3s ease;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .success { background: rgba(46,204,113,0.15); border-left: 3px solid #2ecc71; color: #2ecc71; }
+        .error { background: rgba(231,76,60,0.15); border-left: 3px solid #e74c3c; color: #e74c3c; }
+        .info { background: rgba(52,152,219,0.15); border-left: 3px solid #3498db; color: #3498db; }
+
+        .preview-box {
+            background: #00000033;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        iframe {
+            width: 100%;
+            height: 320px;
+            border: none;
+            background: white;
+        }
+
+        .link-card {
+            background: #07121ec9;
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 16px;
+            backdrop-filter: blur(4px);
+        }
+
+        .progress-bar-fnx {
+            height: 4px;
+            background: #1e2a3a;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill-fnx {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0066ff, #8b00ff);
+            transition: width 0.4s ease;
+        }
+
+        /* Loader animation */
+        .loader-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+        .loader-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: bounce 1.4s infinite;
+        }
+        .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<div class="fnx-desktop">
+    <div class="bg-animation">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="fnx-taskbar">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+            <div class="logo-text">fNX Host</div>
+            <div style="font-size: 11px; background: #00d4ff22; padding: 4px 10px; border-radius: 40px;">v1.0 · LIVE OS</div>
+        </div>
+        <div class="taskbar-time" id="fnxClock">
+            <i class="far fa-clock"></i> <span id="timeDisplay">--:--</span>
+        </div>
+    </div>
+
+    <div class="fnx-dashboard">
+        <!-- Window 1: GitHub Core -->
+        <div class="fnx-window">
+            <div class="window-header">
+                <i class="fab fa-github" style="color:#00d4ff;"></i>
+                <span>🔐 GITHUB CORE</span>
+            </div>
+            <div class="window-content">
+                <input type="password" id="fnxToken" class="glass-input" placeholder="🔑 GitHub Personal Access Token">
+                <input type="text" id="fnxRepo" class="glass-input" placeholder="📦 Repo Name (any name)">
+                <button id="fnxSetupBtn" class="btn-fnx"><i class="fas fa-sync-alt"></i> ⚡ AUTO INIT & DEPLOY READY</button>
+                <div id="fnxSetupStatus" class="status-card info"><i class="fas fa-info-circle"></i> Enter token + repo name — one click auto setup</div>
+            </div>
+        </div>
+
+        <!-- Window 2: Upload Studio -->
+        <div class="fnx-window">
+            <div class="window-header">
+                <i class="fas fa-cloud-upload-alt" style="color:#2ecc71;"></i>
+                <span>📡 UPLOAD STUDIO</span>
+            </div>
+            <div class="window-content">
+                <div id="fnxDropZone" class="upload-zone-fnx">
+                    <i class="fas fa-file-code fa-3x" style="margin-bottom: 12px; color:#00d4ff;"></i>
+                    <div><strong>drag & drop</strong> or click to select</div>
+                    <div style="font-size: 12px; margin-top: 6px;">.html / .htm</div>
+                    <input type="file" id="fnxFileInput" accept=".html,.htm" style="display: none;">
+                </div>
+                <button id="fnxDeployBtn" class="btn-fnx"><i class="fab fa-github"></i> 🚀 DEPLOY & GO LIVE</button>
+                <div class="progress-bar-fnx" id="fnxProgressBar" style="display: none;">
+                    <div class="progress-fill-fnx" id="fnxProgressFill"></div>
+                </div>
+                <div id="fnxUploadStatus" class="status-card"></div>
+                <div id="fnxLinks"></div>
+            </div>
+        </div>
+
+        <!-- Window 3: Preview Nexus -->
+        <div class="fnx-window">
+            <div class="window-header">
+                <i class="fas fa-eye" style="color:#f39c12;"></i>
+                <span>🔍 LIVE PREVIEW</span>
+            </div>
+            <div class="window-content">
+                <div id="fnxPreview">
+                    <div style="text-align: center; padding: 50px; background: #0a0f1a; border-radius: 20px;">
+                        <i class="fas fa-globe fa-3x" style="color:#00d4ff; margin-bottom: 12px;"></i>
+                        <p>✨ Your hosted file preview ✨</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 20px; font-size: 11px; opacity: 0.5; border-top: 1px solid #2c405e; margin-top: 20px;">
+        <i class="fas fa-shield-alt"></i> fNX Host OS — Zero config, just token + repo | Auto Pages + Deploy
+    </div>
+</div>
+
+<script>
+    // ================= fNX OS STATE =================
+    let fnxConfig = { token: '', username: '', repoName: '' };
+    let selectedFile = null;
+
+    // DOM refs
+    const tokenInp = document.getElementById('fnxToken');
+    const repoInp = document.getElementById('fnxRepo');
+    const setupBtn = document.getElementById('fnxSetupBtn');
+    const setupStatus = document.getElementById('fnxSetupStatus');
+    const dropZone = document.getElementById('fnxDropZone');
+    const fileInput = document.getElementById('fnxFileInput');
+    const deployBtn = document.getElementById('fnxDeployBtn');
+    const uploadStatusDiv = document.getElementById('fnxUploadStatus');
+    const linksDiv = document.getElementById('fnxLinks');
+    const previewDiv = document.getElementById('fnxPreview');
+    const progressBar = document.getElementById('fnxProgressBar');
+    const progressFill = document.getElementById('fnxProgressFill');
+
+    // helper status
+    function setStatus(el, msg, type) {
+        el.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle')}"></i> ${msg}`;
+        el.className = `status-card ${type}`;
+        setTimeout(() => {
+            if (el.innerHTML.includes(msg)) {
+                // keep success but no auto clear for errors
+            }
+        }, 3000);
+    }
+
+    function updateProgress(percent, text) {
+        progressBar.style.display = 'block';
+        progressFill.style.width = percent + '%';
+        if (text) setStatus(uploadStatusDiv, text, 'info');
+        if (percent >= 100) setTimeout(() => progressBar.style.display = 'none', 1200);
+    }
+
+    // GitHub Pages enable with retry
+    async function enablePages(token, owner, repo, retries = 3) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pages`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ source: { branch: 'main', path: '/' } })
+                });
+                if (res.status === 201 || res.status === 204 || res.status === 409) return true;
+                await new Promise(r => setTimeout(r, 1200));
+            } catch(e) {}
+        }
+        return false;
+    }
+
+    async function waitPagesReady(owner, repo, maxAttempts = 10) {
+        const url = `https://${owner}.github.io/${repo}/`;
+        for (let i = 0; i < maxAttempts; i++) {
+            try {
+                await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+                return true;
+            } catch(e) {}
+            await new Promise(r => setTimeout(r, 1800));
+        }
+        return false;
+    }
+
+    // AUTO SETUP
+    setupBtn.addEventListener('click', async () => {
+        const token = tokenInp.value.trim();
+        const repoName = repoInp.value.trim();
+        if (!token || !repoName) {
+            setStatus(setupStatus, '❌ Token & Repo name required!', 'error');
+            return;
+        }
+        setStatus(setupStatus, '🔄 Authenticating & creating environment...', 'info');
+        setupBtn.disabled = true;
+        setupBtn.innerHTML = '<div class="loader-dots"><span></span><span></span><span></span></div> Setting up...';
+
+        try {
+            const userRes = await fetch('https://api.github.com/user', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!userRes.ok) throw new Error('Invalid token (need repo scope)');
+            const user = await userRes.json();
+            const username = user.login;
+
+            const checkRepo = await fetch(`https://api.github.com/repos/${username}/${repoName}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (checkRepo.status === 404) {
+                const create = await fetch('https://api.github.com/user/repos', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: repoName, private: false, auto_init: true })
+                });
+                if (!create.ok) throw new Error('Repo creation failed');
+                setStatus(setupStatus, `✅ Repo "${repoName}" created!`, 'success');
+            } else {
+                setStatus(setupStatus, `📁 Repo already exists`, 'success');
+            }
+
+            setStatus(setupStatus, '🌐 Enabling GitHub Pages...', 'info');
+            await enablePages(token, username, repoName);
+            setStatus(setupStatus, '⏳ Waiting for Pages propagation...', 'info');
+            await waitPagesReady(username, repoName);
+
+            fnxConfig = { token, username, repoName };
+            localStorage.setItem('fnx_host_config', JSON.stringify(fnxConfig));
+            setStatus(setupStatus, `🎉 READY! ${username}/${repoName} is LIVE`, 'success');
+            const previewUrl = `https://${username}.github.io/${repoName}/`;
+            setupStatus.innerHTML += `<div style="margin-top:8px"><i class="fas fa-link"></i> <a href="${previewUrl}" target="_blank" style="color:#00d4ff;">${previewUrl}</a></div>`;
+        } catch(err) {
+            setStatus(setupStatus, `❌ Setup failed: ${err.message}`, 'error');
+        } finally {
+            setupBtn.disabled = false;
+            setupBtn.innerHTML = '<i class="fas fa-sync-alt"></i> ⚡ AUTO INIT & DEPLOY READY';
+        }
+    });
+
+    // file upload handlers
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#00d4ff'; dropZone.style.transform = 'scale(1.02)'; });
+    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'rgba(0,212,255,0.5)'; dropZone.style.transform = 'scale(1)'; });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(0,212,255,0.5)';
+        dropZone.style.transform = 'scale(1)';
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+    function handleFile(file) {
+        if (!file.name.match(/\.(html|htm)$/i)) {
+            setStatus(uploadStatusDiv, '❌ Only HTML files allowed', 'error');
+            return;
+        }
+        selectedFile = file;
+        setStatus(uploadStatusDiv, `✅ ${file.name} (${(file.size/1024).toFixed(1)} KB) ready`, 'success');
+        dropZone.style.borderColor = '#2ecc71';
+    }
+
+    // Deploy
+    deployBtn.addEventListener('click', async () => {
+        const saved = localStorage.getItem('fnx_host_config');
+        if (!saved) {
+            setStatus(uploadStatusDiv, '⚠️ First run GitHub auto setup (token + repo)', 'error');
+            return;
+        }
+        const cfg = JSON.parse(saved);
+        if (!selectedFile) {
+            setStatus(uploadStatusDiv, '📂 Select an HTML file first', 'error');
+            return;
+        }
+
+        deployBtn.disabled = true;
+        deployBtn.innerHTML = '<div class="loader-dots"><span></span><span></span><span></span></div> Deploying...';
+        updateProgress(15, 'Reading file...');
+
+        try {
+            const content = await readFile(selectedFile);
+            updateProgress(45, 'Uploading to GitHub...');
+            const base64 = btoa(unescape(encodeURIComponent(content)));
+            const path = 'index.html';
+
+            const resp = await fetch(`https://api.github.com/repos/${cfg.username}/${cfg.repoName}/contents/${path}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${cfg.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Deploy via fNX: ${selectedFile.name}`,
+                    content: base64,
+                    branch: 'main'
+                })
+            });
+            if (!resp.ok) {
+                const errJson = await resp.json();
+                throw new Error(errJson.message || 'Upload fail');
+            }
+            updateProgress(100, '✅ Successfully hosted!');
+            const liveUrl = `https://${cfg.username}.github.io/${cfg.repoName}/`;
+            const rawUrl = `https://raw.githubusercontent.com/${cfg.username}/${cfg.repoName}/main/index.html`;
+
+            linksDiv.innerHTML = `
+                <div class="link-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                        <strong><i class="fas fa-globe"></i> LIVE LINK</strong>
+                        <button id="copyLiveBtn" class="btn-fnx" style="width:auto; padding:6px 14px;"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
+                    <a href="${liveUrl}" target="_blank" style="color:#00d4ff; word-break:break-all;">${liveUrl}</a>
+                    <div style="font-size:11px; margin-top:6px;"><i class="fas fa-database"></i> raw: <a href="${rawUrl}" target="_blank" style="color:#88aaff;">raw</a></div>
+                </div>
+            `;
+            document.getElementById('copyLiveBtn')?.addEventListener('click', () => {
+                navigator.clipboard.writeText(liveUrl);
+                setStatus(uploadStatusDiv, '📋 URL copied!', 'success');
+            });
+
+            previewDiv.innerHTML = `
+                <div class="preview-box">
+                    <iframe src="${liveUrl}" title="live preview"></iframe>
+                    <div style="text-align:center; margin-top:10px;">
+                        <button id="openTabBtn" class="btn-fnx" style="width:auto; padding:8px 20px;"><i class="fas fa-external-link-alt"></i> Open in New Tab</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('openTabBtn')?.addEventListener('click', () => window.open(liveUrl, '_blank'));
+            setStatus(uploadStatusDiv, '🎉 Deployment complete! Site live.', 'success');
+        } catch (err) {
+            setStatus(uploadStatusDiv, `❌ Deploy error: ${err.message}`, 'error');
+        } finally {
+            deployBtn.disabled = false;
+            deployBtn.innerHTML = '<i class="fab fa-github"></i> 🚀 DEPLOY & GO LIVE';
+        }
+    });
+
+    function readFile(file) {
+        return new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.onload = e => res(e.target.result);
+            reader.onerror = () => rej(new Error('File read failed'));
+            reader.readAsText(file);
+        });
+    }
+
+    // live clock
+    function updateClock() {
+        const d = new Date();
+        document.getElementById('timeDisplay').innerText = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // load prev config if exists
+    const stored = localStorage.getItem('fnx_host_config');
+    if (stored) {
+        try {
+            const prev = JSON.parse(stored);
+            tokenInp.value = prev.token || '';
+            repoInp.value = prev.repoName || '';
+            fnxConfig = prev;
+            setStatus(setupStatus, `💾 Previous config: ${prev.username}/${prev.repoName}`, 'success');
+        } catch(e) {}
+    } else {
+        setStatus(setupStatus, '✨ Enter token + any repo name → auto setup everything', 'info');
+    }
+</script>
+</body>
+</html>
